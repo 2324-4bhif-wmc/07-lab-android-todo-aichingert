@@ -18,8 +18,8 @@ public class MainActivity extends ComponentActivity {
 
     static final String TAG = MainActivity.class.getSimpleName();
 
-//    @Inject
-//    Config config;
+    //@Inject
+    //Config config;
 
     @Inject
     MainView mainView;
@@ -30,13 +30,12 @@ public class MainActivity extends ComponentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        String url = config.xml.getValue("json.placeholder.baseurl", String.class);
-//        Log.i(TAG, "onCreate: " + url);
+        //String url = config.xml.getValue("json.placeholder.baseurl", String.class);
+        //Log.i(TAG, "onCreate: " + url);
         Config.load(this);
         var base_url = Config.getProperty("json.placeholder.baseurl");
         Log.i(TAG, "onCreate: " + base_url);
-        mainView.buildContent(this);
-        todoService.getAll();
+        mainView.setContentOfActivity(this);
     }
 }
 
