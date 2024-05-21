@@ -1,8 +1,6 @@
 package at.htl.todo.ui.layout
 
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +15,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,15 +29,16 @@ import androidx.compose.runtime.rxjava3.subscribeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import at.htl.todo.model.Model
-import at.htl.todo.model.ModelStore
 import at.htl.todo.model.Todo
 import at.htl.todo.model.TodoService
 import at.htl.todo.ui.theme.TodoTheme
 import at.htl.todo.model.Store
-//import at.htl.todo.util.store.Store
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -123,8 +123,8 @@ fun TodoPreview() {
 }
 
 @Composable
-fun TabScreen(model: Model, store: Store?, toDoService: TodoService?) {
-    var uiState = model.uiState
+fun TabScreen(model: Model, store: Store?, todoService: TodoService?) {
+    val uiState = model.uiState
     val tabIndex = uiState.selectedTab
     val tabs = listOf("Home", "ToDos", "Settings")
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -146,7 +146,7 @@ fun TabScreen(model: Model, store: Store?, toDoService: TodoService?) {
             }
         }
         when (tabIndex) {
-            0 -> TodoPreview()
+            0 -> HomeScreen(model, todoService, store)
             1 -> TodoPreview()
             2 -> TodoPreview()
         }
@@ -168,6 +168,39 @@ fun TabScreenPreview() {
     model.todos = arrayOf(todo(1, "homework"), todo(2, "this is a todo with a very long text which should be truncated"))
 
     TodoTheme {
-        TabScreen(model = model, store = null, toDoService = null)
+        TabScreen(model = model, store = null, todoService = null)
+    }
+}
+
+
+@Composable
+fun HomeScreen(model: Model, toDoService: TodoService?, store: Store?) {
+    val todos = model.todos;
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .padding(16.dp)) {
+            Text(
+                text = "Welcome Home!",
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Row(Modifier.align(Alignment.CenterHorizontally)) {
+            Text("${todos.size} Todos have been loaded")
+        }
+        Row(Modifier.align(Alignment.CenterHorizontally)) {
+            Button(modifier = Modifier.padding(16.dp),
+                onClick = { toDoService?.getAll() }) {
+                Text("load Todos now")
+            }
+        }
+        Row(Modifier.align(Alignment.CenterHorizontally)) {
+            Button(
+                onClick = { store?.setTodos(arrayOf()) }) {
+                Text("clean Todos")
+            }
+        }
     }
 }
